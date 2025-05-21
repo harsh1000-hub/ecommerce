@@ -1,12 +1,10 @@
 package com.harsh.ecommerce;
 
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -20,15 +18,30 @@ public class UserService {
     }
 
     // fetch user per id
-    public User fetchSingleUserById(Long id) {
-        for (User user : userList) {
-            if (user.getId().equals(id)) {
-                return user;
-            }
-        }
-        return null;
+    public Optional<User> fetchSingleUserById(Long id) {
+//        for (User user : userList) {
+//            if (user.getId().equals(id)) {
+//                return user;
+//            }
+//        }
+//        return null;
+          return userList.
+                  stream().
+                  filter(user -> user.getId().equals(id)).
+                  findFirst();  // using Java Stream
     }
 
+    // Method for update specific user
+    public boolean updateUserById(Long id, User user){
+        for (User el : userList) {
+            if (el.getId().equals(id)) {
+                el.setFirstName(user.getFirstName());
+                el.setLastName(user.getLastName());
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void addUser(User user){
         if (user.getId() == null) {          // Check if id is missing

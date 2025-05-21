@@ -34,10 +34,27 @@ public class UserController {
        // fetch user by id
        @GetMapping("/api/users/{id}")
        public  ResponseEntity<User> getUser(@PathVariable Long id) {
-               User user = userService.fetchSingleUserById(id);
-               if(user == null )  return ResponseEntity.notFound().build();
-              return ResponseEntity.ok(user);
+//               User user = userService.fetchSingleUserById(id);
+//               if(user == null )  return ResponseEntity.notFound().build();
+//              return ResponseEntity.ok(user);
+
+              // use java stream
+              return userService.fetchSingleUserById(id)
+                      .map(ResponseEntity::ok)
+                      .orElseGet(()->ResponseEntity.notFound().build());
        }
+
+       // controller to call  update specific user method for service layer
+       @PutMapping("/api/users/{id}")
+       public  ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody User user){
+              boolean updated = userService.updateUserById(id, user);
+              if (updated) {
+                     return ResponseEntity.ok("User updated successfully");
+              } else {
+                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found for the update");
+              }
+       }
+
 
        @PostMapping("/api/users")
        public ResponseEntity<String> createUser(@RequestBody  User user){       // using Service Layer
