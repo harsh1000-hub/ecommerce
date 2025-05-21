@@ -32,15 +32,28 @@ public class UserService {
     }
 
     // Method for update specific user
-    public boolean updateUserById(Long id, User user){
-        for (User el : userList) {
-            if (el.getId().equals(id)) {
-                el.setFirstName(user.getFirstName());
-                el.setLastName(user.getLastName());
+    /* public boolean updateUserById(Long id, User updatedUser){
+        for (User user : userList) {
+            if (user.getId().equals(id)) {
+                user.setFirstName(updatedUser.getFirstName());
+                user.setLastName(updatedUser.getLastName());
                 return true;
             }
         }
         return false;
+    }  */
+
+    // Method for update specific user by stream
+    public boolean updateUserById(Long id, User updatedUser){
+             return userList.stream().
+                     filter(user -> user.getId().equals(id)).
+                     findFirst().
+                     map(existingUser -> {
+                         existingUser.setFirstName(updatedUser.getFirstName());
+                         existingUser.setLastName(updatedUser.getLastName());
+                         return true;
+                     }).orElse(false);
+
     }
 
     public void addUser(User user){

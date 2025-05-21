@@ -1,6 +1,7 @@
 package com.harsh.ecommerce;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,12 +13,15 @@ import static org.springframework.http.HttpStatus.*;
 
 
 @RestController
+@RequestMapping("/api/users")    // use RequestMapping annotation to give base URL outside the class.
+
 public class UserController {
 
        @Autowired // wired controller from the UserService
        private UserService userService;   // Use UserService from service layer
 
-       @GetMapping("/api/users")
+       // @RequestMapping(value = "/api/users",method = RequestMethod.GET)   -- another way to map GET request
+       @GetMapping
        public ResponseEntity<List<User>> getAllUsers(){
               // one way to use the response-entity with controlling the http status code
               // return new ResponseEntity<>(userService.fetchAllUsers(), HttpStatus.OK);
@@ -32,7 +36,7 @@ public class UserController {
         */
 
        // fetch user by id
-       @GetMapping("/api/users/{id}")
+       @GetMapping("/{id}")
        public  ResponseEntity<User> getUser(@PathVariable Long id) {
 //               User user = userService.fetchSingleUserById(id);
 //               if(user == null )  return ResponseEntity.notFound().build();
@@ -45,9 +49,9 @@ public class UserController {
        }
 
        // controller to call  update specific user method for service layer
-       @PutMapping("/api/users/{id}")
-       public  ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody User user){
-              boolean updated = userService.updateUserById(id, user);
+       @PutMapping("/{id}")
+       public  ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody User updatedUser){
+              boolean updated = userService.updateUserById(id, updatedUser);
               if (updated) {
                      return ResponseEntity.ok("User updated successfully");
               } else {
@@ -56,7 +60,7 @@ public class UserController {
        }
 
 
-       @PostMapping("/api/users")
+       @PostMapping
        public ResponseEntity<String> createUser(@RequestBody  User user){       // using Service Layer
               userService.addUser(user);
               return ResponseEntity.status(HttpStatus.CREATED).body("User added successfully");
